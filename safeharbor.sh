@@ -13,20 +13,21 @@ do
 
   # For each result found, clone or update repo
   for repo in $repos; do
-    if [[ "$repo" =~ http(s?)://github.com/(.+)/(.+) ]]
-    then
+    if [[ "$repo" =~ http(s?)://github.com/(.+)/(.+) ]]; then
       echo "Found Repository: $repo"
       dirname=$(echo "$repo" | cut -d"/" -f5)
 
-      if [[ ! -d "$dirname" ]]; then
-        git clone "$repo" # First time? Clone repo then
-      fi
+      if [[ ! -z "$dirname" ]]; then
+        if [[ ! -d "$dirname" ]]; then
+          git clone "$repo" # First time? Clone repo first
+        fi
 
-      # Keep all branches up-to-date
-      pushd "$dirname"
-      for b in $(git branch -r | grep -v -- '->'); do git branch --track "${b##origin/}" "$b"; done
-      git fetch --all
-      popd
+        # Keep all branches up-to-date
+        pushd "$dirname"
+        for b in $(git branch -r | grep -v -- '->'); do git branch --track "${b##origin/}" "$b"; done
+        git fetch --all
+        popd
+      fi
     fi
   done
 

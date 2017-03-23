@@ -46,8 +46,8 @@ done
 # Step 2: Remove repositories not starred anymore
 # ###############################################
 repo_list=($(ls))
-diff_list=($(echo ${stars_list[@]} ${repo_list[@]} | tr ' ' '\n' | sort | uniq -u))
+diff_list=($(echo "${stars_list[@]}" "${repo_list[@]}" | tr ' ' '\n' | sort | uniq -u))
 
 for dir in "${diff_list[@]}"; do
-  rm -Rf dir
+  rm -Rf "$dir"
 done

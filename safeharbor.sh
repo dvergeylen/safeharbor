@@ -16,7 +16,7 @@ do
 
   # For each result found, clone or update repo
   for repo in $repos; do
-    if test "$repo" =~ http(s?)://github.com/(.+)/(.+); then
+    if [[ "$repo" =~ http(s?)://github.com/(.+)/(.+) ]]; then
       echo "Found Repository: $repo"
       dirname=$(echo "$repo" | cut -d"/" -f5)
 

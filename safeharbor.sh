@@ -8,7 +8,7 @@ stars_list=()
 # #############################################
 # Step 1: Clone and Update starred repositories
 # #############################################
-while [ ! -z "$url" ] # Loop while there is a pagination URL
+until -z "$url"  # Loop while there is a pagination URL
 do
   # Fetch pagination
   output=$(curl -is "$url")
@@ -16,13 +16,13 @@ do
 
   # For each result found, clone or update repo
   for repo in $repos; do
-    if [[ "$repo" =~ http(s?)://github.com/(.+)/(.+) ]]; then
+    if test "$repo" =~ http(s?)://github.com/(.+)/(.+); then
       echo "Found Repository: $repo"
       dirname=$(echo "$repo" | cut -d"/" -f5)
 
-      if [[ ! -z "$dirname" ]]; then
+      if test ! -z "$dirname"; then
 
-        if [[ ! -d "$dirname" ]]; then
+        if test ! -d "$dirname"; then
           git clone "$repo" # First time? Clone repo first
         fi
 
@@ -46,8 +46,7 @@ done
 # Step 2: Remove repositories not starred anymore
 # ###############################################
 repo_list=($(ls))
-diff_list=($(echo "${stars_list[@]}" "${repo_list[@]}" | tr ' ' '\n' | sort | uniq -u))
-
+diff_list=($(printf '%s\n' "${stars_list[@]}" "${repo_list[@]}" | sort | uniq -u))
 for dir in "${diff_list[@]}"; do
   rm -Rf "$dir"
 done

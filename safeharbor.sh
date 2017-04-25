@@ -8,7 +8,7 @@ stars_list=()
 # #############################################
 # Step 1: Clone and Update starred repositories
 # #############################################
-until -z "$url"  # Loop while there is a pagination URL
+until test -z "$url"  # Loop while there is a pagination URL
 do
   # Fetch pagination
   output=$(curl -is "$url")

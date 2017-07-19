@@ -9,7 +9,7 @@ stars_list=()
 usage() { echo "Usage: $0 [--strict-mode] [-h|--help]" 1>&2; exit 1; }
 
 # Parse Command Line
-args=$(getopt -o h --longoptions help  -- "$@")
+args=$(getopt -o h --longoptions help,strict-mode  -- "$@")
 
 if [[ "${args[*]}" =~ "--help" || "${args[*]}" =~ "-h" ]]; then
   usage
@@ -55,8 +55,10 @@ done
 # ###############################################
 # Step 2: Remove repositories not starred anymore
 # ###############################################
-repo_list=($(ls))
-diff_list=($(printf '%s\n' "${stars_list[@]}" "${repo_list[@]}" | sort | uniq -u))
-for dir in "${diff_list[@]}"; do
-  rm -Rf "$dir"
-done
+if [[ "${args[*]}" =~ "--strict-mode" ]]; then
+  repo_list=($(ls))
+  diff_list=($(printf '%s\n' "${stars_list[@]}" "${repo_list[@]}" | sort | uniq -u))
+  for dir in "${diff_list[@]}"; do
+    rm -Rf "$dir"
+  done
+fi

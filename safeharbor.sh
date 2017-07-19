@@ -5,6 +5,16 @@ GHUSER=GITHUB_USERNAME
 url="https://api.github.com/users/$GHUSER/starred"
 stars_list=()
 
+# Define usage
+usage() { echo "Usage: $0 [--strict-mode] [-h|--help]" 1>&2; exit 1; }
+
+# Parse Command Line
+args=$(getopt -o h --longoptions help  -- "$@")
+
+if [[ "${args[*]}" =~ "--help" || "${args[*]}" =~ "-h" ]]; then
+  usage
+fi
+
 # #############################################
 # Step 1: Clone and Update starred repositories
 # #############################################

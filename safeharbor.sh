@@ -33,7 +33,7 @@ do
     if test ! -z "$dirname"; then
 
       if test ! -d "$dirname"; then
-        git clone "$repo" # First time? Clone repo first
+        git clone "$repo" "$dirname" # First time? Clone repo first
       fi
 
       # Keep all branches up-to-date

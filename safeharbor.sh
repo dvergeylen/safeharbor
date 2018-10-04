@@ -37,7 +37,6 @@ do
       fi
 
       # Keep all branches up-to-date
-       echo 'git branch --track "${b##origin/}" "$b"'
       pushd "$dirname"
       for b in $(git branch -r | grep -v -- '->'); do git branch --track "${b##origin/}" "$b"; done
       git fetch --all

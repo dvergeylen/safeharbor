@@ -22,34 +22,34 @@ until test -z "$url"  # Loop while there is a pagination URL
 do
   # Fetch pagination
   output=$(curl -is "$url")
-  repos=$(echo "$output" | grep "html_url" | grep -P '\S+\s"\K\S+' | cut -d'"' -f4)
+  repos=$(echo "$output" | grep -P "html_url\": \"https://github.com/\S+/\S+" | cut -d '"' -f4)
 
   # For each result found, clone or update repo
   for repo in $repos; do
-    if [[ "$repo" =~ http(s?)://github.com/(.+)/(.+) ]]; then
-      echo "Found Repository: $repo"
-      dirname=$(echo "$repo" | cut -d"/" -f5)
+    dirname="${repo##https://github.com/}"
+    echo "Found Repository: $dirname"
+    dirname="${dirname/\//-}" # outputs: user-reponame
 
-      if test ! -z "$dirname"; then
+    if test ! -z "$dirname"; then
 
-        if test ! -d "$dirname"; then
-          git clone "$repo" # First time? Clone repo first
-        fi
-
-        # Keep all branches up-to-date
-        pushd "$dirname"
-        for b in $(git branch -r | grep -v -- '->'); do git branch --track "${b##origin/}" "$b"; done
-        git fetch --all
-        popd
-
-        # Append Repo name prevent later removal
-        stars_list+=("$dirname")
+      if test ! -d "$dirname"; then
+        git clone "$repo" # First time? Clone repo first
       fi
+
+      # Keep all branches up-to-date
+       echo 'git branch --track "${b##origin/}" "$b"'
+      pushd "$dirname"
+      for b in $(git branch -r | grep -v -- '->'); do git branch --track "${b##origin/}" "$b"; done
+      git fetch --all
+      popd
+
+      # Append Repo name prevent later removal
+      stars_list+=("$dirname")
     fi
   done
 
   # Find the next pagination URL
-  url=$(echo "$output" | grep 'rel="next"' | cut -d';' -f1 | grep -Po "\<\K\S+" | tr -d '>')
+  url=$(echo "$output" | grep -Po '<\S+>; rel="next"' | grep -Po "https\S+\d")
 done
 
 # ###############################################

@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 
+# Define usage
+usage() { echo "Usage: GHUSER=myusername; $0 [--strict-mode] [-h|--help]" 1>&2; exit 1; }
+
 # Define credentials
-GHUSER=GITHUB_USERNAME
+if [[ ! -v GHUSER ]]; then
+  echo "No GHUSER env variable defined."
+  usage
+  exit 1
+fi
+
 url="https://api.github.com/users/$GHUSER/starred"
 stars_list=()
-
-# Define usage
-usage() { echo "Usage: $0 [--strict-mode] [-h|--help]" 1>&2; exit 1; }
 
 # Parse Command Line
 args=$(getopt -o h --longoptions help,strict-mode  -- "$@")
